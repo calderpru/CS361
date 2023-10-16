@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Image Selector</title>
+</head>
+<body>
+    <button onclick="requestRandomImage()">Show Random Image</button>
+    <img id="outputImage" alt="Random Image" width="300px">
+
+    <script>
+        function requestRandomImage() {
+            fetch('/start-prng'); // Signal the PRNG service
+        }
+
+        async function pollForImage() {
+            let imagePath = '';
+            while (!imagePath) {
+                await new Promise(r => setTimeout(r, 1000));
+                const response = await fetch('/get-image-path');
+                imagePath = await response.text();
+            }
+            document.getElementById('outputImage').src = imagePath;
+        }
+
+        pollForImage();
+    </script>
+</body>
+</html>
